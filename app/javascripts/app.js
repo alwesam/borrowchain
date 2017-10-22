@@ -11,7 +11,7 @@ let BorrowChain = TruffleContract(borrow_chain_artifacts);
 BorrowChain.setProvider(window.web3);
 
 //function from which to borrow (html)
-window.borrowAnItem = function() {
+const borrowAnItem = function() {
 
   //for now
   let itemId = 1;

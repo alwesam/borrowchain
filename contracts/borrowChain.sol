@@ -33,10 +33,16 @@ contract BorrowChain {
   //}
 
   /////ignore for now
-  //function BorrowChain() {
-  //  //here set all items in the shop
-  //  items = getInitialItems(5);
-  //}
+  function BorrowChain() {
+    //here set all items in the shop
+    //items = getInitialItems(5);
+    ItemForBorrowing memory item;
+    item.id = 1; item.name = "Bike"; item.deposit = 100; 
+    item.location =  "Vancouver"; 
+    item.rate = 5;
+
+    items.push(item);
+  }
 
   function addItem(uint id, string name, uint deposit, string location, uint rate) {
     //todo item id has to calucated here since item has to be unique
@@ -65,6 +71,11 @@ contract BorrowChain {
       }
     }
     return totalCharge;
+  }
+
+  function statusOfItem(uint itemId) returns (string) {
+     string borrowedAt = borrowedItems[itemId].timeOfBorrowing;
+     return borrowedAt;
   }
 
   function transferItem(uint itemId, string timeOfCall) {
