@@ -7,11 +7,10 @@ import { default as contract } from 'truffle-contract'
 
 import borrow_chain_artifacts from '../../build/contracts/BorrowChain.json'
 
-let BorrowChain = TruffleContract(borrow_chain_artifacts);
-BorrowChain.setProvider(window.web3);
+let BorrowChain = contract(borrow_chain_artifacts);
 
 //function from which to borrow (html)
-const borrowAnItem = function() {
+window.borrowAnItem = function() {
 
   //for now
   let itemId = 1;
@@ -20,17 +19,18 @@ const borrowAnItem = function() {
 
   try {
     BorrowChain.deployed().then(function(contractInstance){
+      console.log("call back from borrow chain")
       contractInstance.borrowItem(itemId, dateTime).then(function(){
         console.log("item borrowed");
       })
     })
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 
 }
 
-const getDateTimeOfNow = function () {
+const getDateTimeOfNow = function() {
   let today = new Date();
   let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
   let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
@@ -47,5 +47,7 @@ $( document ).ready(function() {
     console.warn("No web3 detected. Falling back to http://localhost:8545.");
     window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
   }
+
+  BorrowChain.setProvider(window.web3);
 
 });
