@@ -1,15 +1,14 @@
 pragma solidity ^0.4.11;
 
 contract BorrowChain {
-  //here goes code for lending stuff
 
+  //here goes code for lending stuff
   struct ItemForBorrowing {
     uint   id;
     string name;
     uint   deposit;
     string location;
     uint   rate;
-    //bool     newItem;
   }
   ItemForBorrowing[] items;
 
@@ -17,26 +16,33 @@ contract BorrowChain {
     address borrowerId;
     string timeOfBorrowing;
     uint charge;
-    //bool   exists;
+    bool   passed;
   }
   Borrowing[] borrowings;
 
   mapping( uint =>  Borrowing ) borrowedItems;
 
-  //function getInitialItems(uint count) returns (ItemForBorrowing[]) {
-  //  ItemForBorrowing[] localItems;
-  //  for(uint id=1; id <= count; id++) {
-  //    ItemForBorrowing item = ItemForBorrowing(id,"Bike",100,"Vancouver",5);
-  //    localItems.push(item);
-  //  }
-  //  return localItems;
-  //}
-
   /////ignore for now
-  //function BorrowChain() {
-  //  //here set all items in the shop
-  //  items = getInitialItems(5);
-  //}
+  function BorrowChain() {
+    //here set all items in the shop
+    //items = getInitialItems(5);
+    ItemForBorrowing memory item;
+    item.id = 1; item.name = "Bike"; item.deposit = 100; 
+    item.location =  "Vancouver"; 
+    item.rate = 5;
+
+    items.push(item);
+  }
+
+  //test
+  function listfirstItem() returns (string) {
+    for(uint i=0; i < items.length; i++) {
+      if (items[i].id == 1) {
+        return items[i].name;
+      }
+    }
+    return "nothing found";
+  }
 
   function addItem(uint id, string name, uint deposit, string location, uint rate) {
     //todo item id has to calucated here since item has to be unique
@@ -67,6 +73,11 @@ contract BorrowChain {
     return totalCharge;
   }
 
+  function statusOfItem(uint itemId) returns (string) {
+     string borrowedAt = borrowedItems[itemId].timeOfBorrowing;
+     return borrowedAt;
+  }
+
   function transferItem(uint itemId, string timeOfCall) {
     returnItem(itemId,timeOfCall);
     borrowItem(itemId,timeOfCall);
@@ -80,7 +91,8 @@ contract BorrowChain {
       //using a new variable
       Borrowing currentBorrowing = borrowedItems[itemId];
       //string timeDuration      = timeOfCall - currentBorrower.timeOfCall
-      currentBorrowing.charge = 5; //update charge
+      currentBorrowing.charge   = 5; //update charge
+      currentBorrowing.passed = true; //update charge
    //}
   }
 
@@ -88,12 +100,25 @@ contract BorrowChain {
   function borrowItem(uint itemId, string timeOfCall) {
     //Borrowing b            = Borrowing({borrowerId: msg.sender, timeOfBorrowing: timeOfCall, charge: 0}); //set charge to 0
 
-    Borrowing memory b;
-    b.borrowerId = msg.sender; b.timeOfBorrowing = timeOfCall; b.charge = 0;
+    //check if itemId is available
+    if (checkIfItemExists(itemId)) {
+      Borrowing memory b;
+      b.borrowerId = msg.sender; b.timeOfBorrowing = timeOfCall; b.charge = 0;
+      b.passed = false;
+      borrowings.push(b);
+      //set next borrower
+      borrowedItems[itemId] = b;
+    }
 
-    borrowings.push(b);
-    //set next borrower
-    borrowedItems[itemId] = b;
+  }
+
+  function checkIfItemExists(uint itemId) returns (bool) {
+    for(uint i=0; i < items.length; i++) {
+      if (items[i].id == itemId) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
