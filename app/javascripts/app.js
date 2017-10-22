@@ -5,19 +5,37 @@ import "../stylesheets/app.css";
 import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract'
 
-/*
- * When you compile and deploy your Voting contract,
- * truffle stores the abi and deployed address in a json
- * file in the build directory. We will use this information
- * to setup a Voting abstraction. We will use this abstraction
- * later to create an instance of the Voting contract.
- * Compare this against the index.js from our previous tutorial to see the difference
- * https://gist.github.com/maheshmurthy/f6e96d6b3fff4cd4fa7f892de8a1a1b4#file-index-js
- */
+import borrow_chain_artifacts from '../../build/contracts/BorrowChain.json'
 
-import voting_artifacts from '../../build/contracts/BorrowChain.json'
+let BorrowChain = contract(borrow_chain_artifacts);
 
-var BorrowChain = contract(borrow_chain_artifacts);
+//function from which to borrow (html)
+window.borrowAnItem = function() {
+
+  //for now
+  let itemId = 1;
+  //get current time
+  let dateTime = getDateTimeOfNow();
+
+  try {
+    BorrowChain.deployed().then(function(contractInstance){
+      contractInstance.borrowItem(itemId, dateTime).then(function(){
+        console.log("item borrowed");
+      })
+    })
+  } catch (err) {
+    console.log(err)
+  }
+
+}
+
+getDateTimeOfNow = function () {
+  let today = new Date();
+  let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  let dateTime = date+'-'+time;
+  return dateTime;
+}
 
 $( document ).ready(function() {
   if (typeof web3 !== 'undefined') {
@@ -25,8 +43,7 @@ $( document ).ready(function() {
     // Use Mist/MetaMask's provider
     window.web3 = new Web3(web3.currentProvider);
   } else {
-    console.warn("No web3 detected. Falling back to http://localhost:8545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
-    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+    console.warn("No web3 detected. Falling back to http://localhost:8545.");
     window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
   }
 

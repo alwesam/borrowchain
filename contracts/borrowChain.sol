@@ -41,7 +41,13 @@ contract BorrowChain {
   function addItem(uint id, string name, uint deposit, string location, uint rate) {
     //todo item id has to calucated here since item has to be unique
     //id = calculateItemId();
-    ItemForBorrowing item = ItemForBorrowing({id: id, name: name, deposit: deposit, location: location, rate: rate});
+    //ItemForBorrowing item = ItemForBorrowing({id: id, name: name, deposit: deposit, location: location, rate: rate});
+    
+    ItemForBorrowing memory item;
+    item.id = id; item.name = name; item.deposit = deposit; 
+    item.location =  location; 
+    item.rate = rate;
+
     items.push(item); 
   }
 
@@ -80,7 +86,11 @@ contract BorrowChain {
 
   //assuming msg.sender is borrower
   function borrowItem(uint itemId, string timeOfCall) {
-    Borrowing b            = Borrowing({borrowerId: msg.sender, timeOfBorrowing: timeOfCall, charge: 0}); //set charge to 0
+    //Borrowing b            = Borrowing({borrowerId: msg.sender, timeOfBorrowing: timeOfCall, charge: 0}); //set charge to 0
+
+    Borrowing memory b;
+    b.borrowerId = msg.sender; b.timeOfBorrowing = timeOfCall; b.charge = 0;
+
     borrowings.push(b);
     //set next borrower
     borrowedItems[itemId] = b;
