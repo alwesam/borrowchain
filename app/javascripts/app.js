@@ -7,7 +7,8 @@ import { default as contract } from 'truffle-contract'
 
 import borrow_chain_artifacts from '../../build/contracts/BorrowChain.json'
 
-let BorrowChain = contract(borrow_chain_artifacts);
+let BorrowChain = TruffleContract(borrow_chain_artifacts);
+BorrowChain.setProvider(window.web3);
 
 //function from which to borrow (html)
 window.borrowAnItem = function() {
@@ -29,7 +30,7 @@ window.borrowAnItem = function() {
 
 }
 
-getDateTimeOfNow = function () {
+const getDateTimeOfNow = function () {
   let today = new Date();
   let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
   let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
